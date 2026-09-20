@@ -12,7 +12,7 @@
       </el-form-item>
     </el-form>
     <div class="filters" v-if="store.result">
-      <el-radio-group v-model="activeCluster" @change="onCluster">
+      <el-radio-group v-model="activeCluster">
         <el-radio-button label="all">全部</el-radio-button>
         <el-radio-button label="alpha-helix">α-螺旋</el-radio-button>
         <el-radio-button label="beta-sheet">β-折叠</el-radio-button>
@@ -24,17 +24,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { reactive, computed } from "vue"
 import { useProteinStore } from "../store/protein"
 const emit = defineEmits<{ sample: [params: { residues: number; conformations: number }] }>()
 const store = useProteinStore()
 const form = reactive({ residues: 10, conformations: 1000 })
-const activeCluster = ref("all")
+// 直接读写 store，保证筛选状态与结果区各面板始终对应同一批构象
+const activeCluster = computed({
+  get: () => store.selectedCluster,
+  set: (val: string) => store.filterByCluster(val)
+})
 function emitSample() { emit("sample", { ...form }) }
-function onCluster(val: string) { store.filterByCluster(val) }
 </script>
 
 <style scoped>
 .control-card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .filters { margin-top: 12px; }
+.filters :deep(.el-radio-group) { flex-wrap: wrap; row-gap: 8px; }
 </style>

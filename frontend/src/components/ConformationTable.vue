@@ -54,6 +54,6 @@ function exportCSV() {
 
 <style scoped>
 .panel { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
-.table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.table-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .table-header h3 { color: #333; font-size: 15px; }
 </style>

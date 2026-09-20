@@ -146,5 +146,6 @@ onUnmounted(() => {
 .panel { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .panel h3 { margin-bottom: 12px; color: #333; }
 .viewer3d { width: 100%; height: 380px; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+@media (max-width: 640px) { .viewer3d { height: 300px; } }
 .info { text-align: center; margin-top: 10px; font-size: 13px; color: #666; }
 </style>

@@ -54,8 +54,8 @@ watch(()=>[store.result,store.selectedConformation,store.selectedCluster],draw,{
 <style scoped>
 .panel{background:#fff;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .panel h3{margin-bottom:12px;color:#333}
-.plot-canvas{display:block;margin:0 auto;border:1px solid #eee;border-radius:8px}
-.legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:13px}
+.plot-canvas{display:block;margin:0 auto;border:1px solid #eee;border-radius:8px;width:100%;max-width:500px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:12px;font-size:13px}
 .legend .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:4px;vertical-align:middle}
 .dot.a{background:#4ecdc4}.dot.b{background:#ff6b6b}.dot.l{background:#45b7d1}.dot.d{background:#ddd}
 </style>

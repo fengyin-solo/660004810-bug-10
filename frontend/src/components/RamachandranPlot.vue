@@ -3,8 +3,10 @@
     <h3>📊 Ramachandran图 (φ-ψ 二面角空间)</h3>
     <canvas ref="cvs" width="500" height="500" class="plot-canvas"></canvas>
     <div class="legend">
-      <span class="dot a"></span> α-螺旋 <span class="dot b"></span> β-折叠
-      <span class="dot l"></span> 左手螺旋 <span class="dot d"></span> 禁阻区
+      <span><span class="dot a"></span>α-螺旋</span>
+      <span><span class="dot b"></span>β-折叠</span>
+      <span><span class="dot l"></span>左手螺旋</span>
+      <span><span class="dot d"></span>禁阻区</span>
     </div>
   </div>
 </template>
@@ -12,13 +14,18 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue"
 import { useProteinStore } from "../store/protein"
+import type { SamplingResult } from "../types"
+
+const props = defineProps<{ result: SamplingResult; batchId: number }>()
 const store = useProteinStore()
 const cvs = ref<HTMLCanvasElement>()
 
 const colors: Record<string,string> = {"alpha-helix":"#4ecdc4","beta-sheet":"#ff6b6b","left-helix":"#45b7d1","disallowed":"#ddd"}
 
 function draw() {
-  const c = cvs.value!; const ctx = c.getContext("2d")!; const W=c.width,H=c.height
+  const c = cvs.value
+  if (!c) return
+  const ctx = c.getContext("2d")!; const W=c.width,H=c.height
   ctx.clearRect(0,0,W,H)
   ctx.strokeStyle="#e8e8e8"; ctx.lineWidth=1
   for(let a=-180;a<=180;a+=30){
@@ -32,7 +39,8 @@ function draw() {
   ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke()
   ctx.fillStyle="#666"; ctx.font="12px sans-serif"
   ctx.fillText("φ →",W-30,H/2-6); ctx.fillText("ψ ↑",W/2+6,16)
-  const confs = (store.result?.conformations||[]).filter(c=>store.selectedCluster==="all"||c.cluster===store.selectedCluster)
+  const confs = props.result.conformations.filter(c=>store.selectedCluster==="all"||c.cluster===store.selectedCluster)
+  if (!confs.length) return
   const es = confs.map(c=>c.energy); const eMin=Math.min(...es),eMax=Math.max(...es)
   for(const cf of confs){
     const x = ((cf.phi+180)/360)*W, y = H-((cf.psi+180)/360)*H
@@ -43,19 +51,19 @@ function draw() {
   }
   if(store.selectedConformation){
     const sc=store.selectedConformation
-    ctx.beginPath(); ctx.arc(((sc.phi+180)/360)*W, H-((sc.psi+180)/360)*H, 8, 0, Math.PI*2)
+    ctx.beginPath(); ctx.arc(((sc.phi+180)/360)*W, H-((sc.psi+180)/360)*H, 8, 0,Math.PI*2)
     ctx.strokeStyle="#333"; ctx.lineWidth=3; ctx.stroke()
   }
 }
 onMounted(draw)
-watch(()=>[store.result,store.selectedConformation,store.selectedCluster],draw,{deep:true})
+watch(()=>[store.selectedConformation,store.selectedCluster],draw,{deep:true})
 </script>
 
 <style scoped>
-.panel{background:#fff;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.panel h3{margin-bottom:12px;color:#333}
-.plot-canvas{display:block;margin:0 auto;border:1px solid #eee;border-radius:8px}
-.legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:13px}
+.panel{background:#fff;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);height:100%}
+.panel h3{margin-bottom:12px;color:#333;font-size:15px;line-height:1.4;word-break:break-word}
+.plot-canvas{display:block;margin:0 auto;width:100%;max-width:500px;height:auto;border:1px solid #eee;border-radius:8px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:12px;font-size:13px;color:#555}
 .legend .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:4px;vertical-align:middle}
 .dot.a{background:#4ecdc4}.dot.b{background:#ff6b6b}.dot.l{background:#45b7d1}.dot.d{background:#ddd}
 </style>
